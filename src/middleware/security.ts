@@ -12,3 +12,17 @@ export const securityMiddleware: RequestHandler[] = [
   compression(),
   rateLimit({ windowMs: 60_000, max: 100 })
 ];
+
+export const otpSendLimiter = rateLimit({
+  windowMs: 60_000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+export const otpVerifyLimiter = rateLimit({
+  windowMs: 5 * 60_000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false
+});

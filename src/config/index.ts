@@ -15,6 +15,10 @@ const base = z.object({
   JWT_REFRESH_EXPIRES: z.string().optional(),
   HASH_ROUNDS: z.coerce.number().optional(),
 
+  ENABLE_OTP: z.string().optional(),
+  ENABLE_PAYMENTS: z.string().optional(),
+  ENABLE_PUBLIC_BOOKING: z.string().optional(),
+
   STRIPE_SECRET_KEY: z.string().optional(),
   STRIPE_WEBHOOK_SECRET: z.string().optional(),
   STRIPE_API_KEY: z.string().optional(),
@@ -57,9 +61,18 @@ const raw: RawEnv = base.parse(process.env);
 
 const JWT_EXPIRES_IN = raw.JWT_EXPIRES ?? raw.JWT_EXPIRES_IN ?? "1h";
 
+const isProd = raw.NODE_ENV === "production";
+const useRealOtp = isProd && (raw.ENABLE_OTP === "on" || raw.ENABLE_OTP === "true");
+const useRealPayments = isProd && (raw.ENABLE_PAYMENTS === "on" || raw.ENABLE_PAYMENTS === "true");
+const usePublicBooking = isProd && (raw.ENABLE_PUBLIC_BOOKING === "on" || raw.ENABLE_PUBLIC_BOOKING === "true");
+
 export const env = {
   ...raw,
-  JWT_EXPIRES_IN
+  JWT_EXPIRES_IN,
+  isProd,
+  useRealOtp,
+  useRealPayments,
+  usePublicBooking
 };
 
 export type Env = typeof env;

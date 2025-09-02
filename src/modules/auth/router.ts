@@ -8,6 +8,7 @@ import { db } from "../../db/index.js";
 import { users } from "../../db/schema.js";
 import { eq } from "drizzle-orm";
 import { env } from "../../config/index.js";
+import { otpSendLimiter, otpVerifyLimiter } from "../../middleware/security.js";
 
 export const router: ExpressRouter = Router();
 
@@ -38,8 +39,11 @@ async function readOtp(phone: string) {
   return redis.get(`otp:${phone}`);
 }
 
-router.post("/send-otp", async (req, res, next) => {
+router.post("/send-otp", otpSendLimiter, async (req, res, next) => {
   try {
+    if (!env.useRealOtp) {
+      return res.status(501).json({ error: { code: "feature_disabled", message: "OTP is disabled in this environment" } });
+    }
     const body = sendOtpSchema.parse(req.body);
     const phone = normalizePhone(body.phone);
     const code = Math.floor(100000 + Math.random() * 900000).toString();
@@ -54,17 +58,19 @@ router.post("/send-otp", async (req, res, next) => {
         });
       } catch {
         void 0;
-      }
-    }
+      }    }
 
-    res.status(202).json({ ok: true, code: env.NODE_ENV !== "production" ? code : undefined });
+    res.status(202).json({ ok: true });
   } catch (err) {
     next(err);
   }
 });
 
-router.post("/verify-otp", async (req, res, next) => {
+router.post("/verify-otp", otpVerifyLimiter, async (req, res, next) => {
   try {
+    if (!env.useRealOtp) {
+      return res.status(501).json({ error: { code: "feature_disabled", message: "OTP is disabled in this environment" } });
+    }
     const body = verifyOtpSchema.parse(req.body);
     const phone = normalizePhone(body.phone);
     const expected = await readOtp(phone);
