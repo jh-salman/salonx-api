@@ -1,6 +1,14 @@
 import { Router } from "express";
+import { env } from "../../config/index.js";
 
 export const router: import("express").Router = Router();
+
+router.use((req, res, next) => {
+  if (!env.usePublicBooking) {
+    return res.status(501).json({ error: { code: "feature_disabled", message: "Public booking is disabled in this environment" } });
+  }
+  next();
+});
 
 router.get("/services", (_req, res) => {
   res.json({ categories: [], services: [] });
