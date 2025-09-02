@@ -26,8 +26,17 @@ jobs:
           standalone: true
           run_install: false
 
+      - name: Fallback install pnpm (if missing)
+        run: |
+          if ! command -v pnpm >/dev/null 2>&1; then
+            npm i -g pnpm@9
+          fi
+
       - name: Verify pnpm
-        run: pnpm --version
+        run: |
+          echo "PATH=$PATH"
+          which pnpm || true
+          pnpm --version
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
