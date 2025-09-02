@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build-test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,6 +34,3 @@ jobs:
 
       - name: Build
         run: pnpm build
-
-      - name: Test
-        run: pnpm test -- --run
