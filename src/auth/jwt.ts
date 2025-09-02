@@ -35,6 +35,10 @@ export function verifyJwt(token: string) {
 export function signJwt(payload: { sub: string; role: Role; tenantId?: string | null }) {
   return signAccessJwt(payload);
 }
+export function issueAccessToken(payload: { sub: string; role: Role; tenantId?: string | null }) {
+  return signAccessJwt(payload);
+}
+
 
 
 export async function issueTokenPair(payload: { sub: string; role: Role; tenantId?: string | null }) {
