@@ -14,6 +14,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Force install pnpm
+        run: npm i -g pnpm@9
+
       - name: Use Node.js 20
         uses: actions/setup-node@v4
         with:
