@@ -7,6 +7,7 @@
     "test": "vitest",
     "dev": "tsx --env-file .env src/server.ts",
     "build": "tsup src --format esm --dts --out-dir dist",
+    "build:ci": "tsup src --format esm --out-dir dist",
     "start": "node dist/server.js",
     "lint": "eslint .",
     "db:generate": "drizzle-kit generate",
